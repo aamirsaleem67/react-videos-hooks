@@ -10,7 +10,7 @@ const VideoDetail = ({ video }) => {
   return (
     <div style={{ marginTop: "10px" }}>
       <div className="ui embed">
-        <iframe src={videoSrc}></iframe>
+        <iframe title={videoSrc} src={videoSrc}></iframe>
       </div>
       <div className="ui segment">
         <h4 className="ui header">{video.snippet.title}</h4>
