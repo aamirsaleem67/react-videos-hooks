@@ -1,53 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import youtube from "../apis/youtube";
 import VideoList from "./VideoList";
 import VideoDetail from "./VideoDetail";
 
-class App extends React.Component {
-  state = { videos: [], selectedVideo: null };
+const App = () => {
+  const [videos, setVideos] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
-  render() {
-    return (
-      <div style={{ marginTop: "10px" }} className="ui container">
-        <SearchBar onSubmit={(term) => this.onSubmit(term)} />
-        <div className="ui grid stackable">
-          <div className="ui row">
-            <div className="eleven wide column">
-              <VideoDetail video={this.state.selectedVideo} />
-            </div>
-            <div className="five wide column">
-              <VideoList
-                videos={this.state.videos}
-                onVideoSelect={this.onVideoSelect}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    onSubmit("react js");
+  }, []);
 
-  componentDidMount() {
-    this.onSubmit("react js");
-  }
-
-  async onSubmit(term) {
+  const onSubmit = async (term) => {
     const res = await youtube.get("/search", {
       params: {
         q: term,
       },
     });
-    this.setState({
-      videos: res.data.items,
-      selectedVideo: res.data.items[0],
-    });
-  }
-
-  onVideoSelect = (video) => {
-    console.log("video", video);
-    this.setState({ selectedVideo: video });
+    setVideos(res.data.items);
+    setSelectedVideo(res.data.items[0]);
   };
-}
+
+  const onVideoSelect = (video) => {
+    setSelectedVideo(video);
+  };
+
+  return (
+    <div style={{ marginTop: "10px" }} className="ui container">
+      <SearchBar onSubmit={(term) => onSubmit(term)} />
+      <div className="ui grid stackable">
+        <div className="ui row">
+          <div className="eleven wide column">
+            <VideoDetail video={selectedVideo} />
+          </div>
+          <div className="five wide column">
+            <VideoList videos={videos} onVideoSelect={onVideoSelect} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default App;
